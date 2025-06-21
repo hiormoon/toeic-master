@@ -1,56 +1,56 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOEIC 英単語アプリ</title>
-</head>
-<body>
-  <h1>TOEIC 英単語アプリへようこそ！</h1>
-  <p>これから少しずつ単語を追加していきます。</p>
-</body>
-</html>
+<!-- register.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>英単語登録</title>
-  <style>
-    body { font-family: sans-serif; padding: 2em; }
-    input, button, textarea { font-size: 1em; margin-top: 0.5em; display: block; width: 100%; max-width: 400px; }
-    .word-list { margin-top: 2em; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>英単語登録</h1>
-  <label>英単語: <input type="text" id="wordInput"></label>
-  <label>意味: <input type="text" id="meaningInput"></label>
+  <input type="text" id="word" placeholder="英単語">
+  <input type="text" id="meaning" placeholder="意味">
   <button onclick="addWord()">登録</button>
 
-  <div class="word-list" id="wordList"></div>
+  <h2>登録済みの単語</h2>
+  <ul id="wordList"></ul>
 
-  <script>
-    const words = JSON.parse(localStorage.getItem('words') || '[]');
+  <p><a href="study.html">→ 学習画面へ</a></p>
 
-    function addWord() {
-      const word = document.getElementById('wordInput').value.trim();
-      const meaning = document.getElementById('meaningInput').value.trim();
-      if (word && meaning) {
-        words.push({ word, meaning });
-        localStorage.setItem('words', JSON.stringify(words));
-        document.getElementById('wordInput').value = '';
-        document.getElementById('meaningInput').value = '';
-        renderList();
-      }
-    }
-
-    function renderList() {
-      const list = document.getElementById('wordList');
-      list.innerHTML = '<h2>登録済みの単語</h2>' + words.map(w => `<p><strong>${w.word}</strong>: ${w.meaning}</p>`).join('');
-    }
-
-    renderList();
-  </script>
+  <script src="register.js"></script>
 </body>
 </html>
+<script>
+  // 登録済みの単語をlocalStorageから取得
+  function loadWords() {
+    const words = JSON.parse(localStorage.getItem('words') || '[]');
+    const wordList = document.getElementById('wordList');
+    wordList.innerHTML = '';
+    words.forEach(word => {
+      const li = document.createElement('li');
+      li.textContent = `${word.word} - ${word.meaning}`;
+      wordList.appendChild(li);
+    });
+  }
+
+  // 単語を登録
+  function addWord() {
+    const wordInput = document.getElementById('word');
+    const meaningInput = document.getElementById('meaning');
+    const word = wordInput.value.trim();
+    const meaning = meaningInput.value.trim();
+
+    if (word && meaning) {
+      let words = JSON.parse(localStorage.getItem('words') || '[]');
+      words.push({ word, meaning });
+      localStorage.setItem('words', JSON.stringify(words));
+      loadWords();
+      wordInput.value = '';
+      meaningInput.value = '';
+    } else {
+      alert('単語と意味を入力してください。');
+    }
+  }
+
+  // ページ読み込み時に単語リストを表示
+  window.onload = loadWords;
