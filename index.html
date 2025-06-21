@@ -10,3 +10,47 @@
   <p>これから少しずつ単語を追加していきます。</p>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英単語登録</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    input, button, textarea { font-size: 1em; margin-top: 0.5em; display: block; width: 100%; max-width: 400px; }
+    .word-list { margin-top: 2em; }
+  </style>
+</head>
+<body>
+  <h1>英単語登録</h1>
+  <label>英単語: <input type="text" id="wordInput"></label>
+  <label>意味: <input type="text" id="meaningInput"></label>
+  <button onclick="addWord()">登録</button>
+
+  <div class="word-list" id="wordList"></div>
+
+  <script>
+    const words = JSON.parse(localStorage.getItem('words') || '[]');
+
+    function addWord() {
+      const word = document.getElementById('wordInput').value.trim();
+      const meaning = document.getElementById('meaningInput').value.trim();
+      if (word && meaning) {
+        words.push({ word, meaning });
+        localStorage.setItem('words', JSON.stringify(words));
+        document.getElementById('wordInput').value = '';
+        document.getElementById('meaningInput').value = '';
+        renderList();
+      }
+    }
+
+    function renderList() {
+      const list = document.getElementById('wordList');
+      list.innerHTML = '<h2>登録済みの単語</h2>' + words.map(w => `<p><strong>${w.word}</strong>: ${w.meaning}</p>`).join('');
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
